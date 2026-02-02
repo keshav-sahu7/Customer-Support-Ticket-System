@@ -1,0 +1,16 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "CSTS Server | v1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:7202"
+    },
+    {
+      "url": "http://localhost:5297"
+    }
+  ],
+  "paths": { }
+}
