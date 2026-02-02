@@ -1,0 +1,35 @@
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\appsettings.Development.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\appsettings.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\CSTS Server.staticwebassets.endpoints.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\CSTS Server.exe
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\CSTS Server.deps.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\CSTS Server.runtimeconfig.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\CSTS Server.dll
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\CSTS Server.pdb
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\bin\Debug\net10.0\Microsoft.OpenApi.dll
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.csproj.AssemblyReference.cache
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.AssemblyInfoInputs.cache
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.AssemblyInfo.cs
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.csproj.CoreCompileInputs.cache
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.sourcelink.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\rjimswa.dswa.cache.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\rjsmrazor.dswa.cache.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\scopedcss\bundle\CSTS Server.styles.css
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\staticwebassets.build.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\staticwebassets.build.json.cache
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\staticwebassets.development.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\staticwebassets.build.endpoints.json
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\swae.build.ex.cache
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Ser.F7981E56.Up2Date
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.dll
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\refint\CSTS Server.dll
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.pdb
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\CSTS Server.genruntimeconfig.cache
+C:\Users\KESHAV\Developments\Customer-Support-Ticket-System\CSTS Server\obj\Debug\net10.0\ref\CSTS Server.dll
