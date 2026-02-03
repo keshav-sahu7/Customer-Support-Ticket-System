@@ -1,1 +1,69 @@
-.vs/*
+# Visual Studio
+.vs/
+*.sln.docstates
+*.suo
+*.user
+*.userosf
+*.uvproj
+*.bak
+*.ide
+*.log
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Aa]rm64/
+[Aa]rm/
+[Xx]64/
+[Xx]86/
+
+# Packages
+packages/
+*.nupkg
+*.snupkg
+*.pdb
+*.dll
+*.exe
+
+# Rider
+.idea/
+
+# Dotnet tool restore
+.config/dotnet-tools.json
+.config/dotnet-tools.config
+
+# Misc
+*.resharper
+*.bak
+*.orig
+*.swp
+*.swo
+*.tmp
+*.temp
+*.user
+*.testsettings
+*.trx
+*.vsix
+*.webtest
+*.csi
+*.cache
+*.scc
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# IDE-specific files
+*.sln
+*.csproj
+
+# Custom files from project structure
+CSTS.slnx
+CSTS.slnLaunch.user
+email_received.txt
+instructions.txt

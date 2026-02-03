@@ -1,0 +1,6 @@
+@CSTS.Api_HostAddress = http://localhost:5171
+
+GET {{CSTS.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
