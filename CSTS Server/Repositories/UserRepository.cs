@@ -25,7 +25,7 @@ namespace CSTS.Api.Repositories
         public async Task<User?> GetUserByUsernameAndPasswordAsync(string username, string password)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash, false, BCrypt.Net.HashType.SHA256))
             {
                 return user;
             }
