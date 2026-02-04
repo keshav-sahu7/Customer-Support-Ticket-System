@@ -19,21 +19,35 @@ namespace CSTS.Api.Controllers
         [HttpGet("admins")]
         public async Task<IActionResult> GetAdminUsers()
         {
-            var adminUsers = await _userService.GetAdminUsersAsync();
-            return Ok(adminUsers);
+            try
+            {
+                var adminUsers = await _userService.GetAdminUsersAsync();
+                return Ok(adminUsers);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequest loginRequest) // Return type changed
         {
-            var loginResponse = await _userService.LoginAsync(loginRequest.Username, loginRequest.Password);
-
-            if (loginResponse == null)
+            try
             {
-                return Unauthorized("Invalid credentials."); // More specific message
-            }
+                var loginResponse = await _userService.LoginAsync(loginRequest.Username, loginRequest.Password);
 
-            return Ok(loginResponse);
+                if (loginResponse == null)
+                {
+                    return Unauthorized("Invalid credentials."); // More specific message
+                }
+
+                return Ok(loginResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

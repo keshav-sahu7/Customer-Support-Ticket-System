@@ -57,7 +57,7 @@
                     <GridView>
                         <GridViewColumn Header="User" DisplayMemberBinding="{Binding CreatedByUsername}" Width="100"/>
                         <GridViewColumn Header="Comment" DisplayMemberBinding="{Binding Content}" Width="300"/>
-                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding CreatedAt}" Width="150"/>
+                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding CreatedAtLocal}" Width="150"/>
                     </GridView>
                 </ListView.View>
             </ListView>

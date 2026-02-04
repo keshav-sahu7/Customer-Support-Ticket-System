@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers; // Added for AuthenticationHeaderValue
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows; // Added for MessageBox
 
 namespace CSTS.Client.Services
 {
@@ -36,9 +37,25 @@ namespace CSTS.Client.Services
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _jwtToken);
         }
 
+        private async Task<T?> HandleErrorResponse<T>(HttpResponseMessage response, string methodName) where T : class
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            MessageBox.Show($"{errorMessage}", "API Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return null;
+        }
+
+        private async Task<List<T>> HandleErrorResponseForList<T>(HttpResponseMessage response, string methodName)
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            MessageBox.Show($"{errorMessage}", "API Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return new List<T>();
+        }
+
+
+
         public async Task<List<TicketComment>> GetCommentsAsync(Guid ticketId)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/api/tickets/{ticketId}/comments");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/api/comment/{ticketId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -46,8 +63,7 @@ namespace CSTS.Client.Services
                 var comments = JsonConvert.DeserializeObject<List<TicketComment>>(responseContent);
                 return comments ?? new List<TicketComment>();
             }
-
-            return new List<TicketComment>();
+            return await HandleErrorResponseForList<TicketComment>(response, nameof(GetCommentsAsync));
         }
 
         public async Task<Ticket?> GetTicketAsync(Guid ticketId) // Changed return type to nullable
@@ -60,8 +76,7 @@ namespace CSTS.Client.Services
                 var ticket = JsonConvert.DeserializeObject<Ticket>(responseContent);
                 return ticket;
             }
-
-            return null;
+            return await HandleErrorResponse<Ticket>(response, nameof(GetTicketAsync));
         }
 
         public async Task<List<User>> GetUsersAsync()
@@ -74,8 +89,7 @@ namespace CSTS.Client.Services
                 var users = JsonConvert.DeserializeObject<List<User>>(responseContent);
                 return users ?? new List<User>();
             }
-
-            return new List<User>();
+            return await HandleErrorResponseForList<User>(response, nameof(GetUsersAsync));
         }
 
         public async Task<Ticket?> AssignTicketAsync(Guid ticketId, Guid assignToId) // Changed return type to nullable
@@ -92,8 +106,7 @@ namespace CSTS.Client.Services
                 var ticket = JsonConvert.DeserializeObject<Ticket>(responseContent);
                 return ticket;
             }
-
-            return null;
+            return await HandleErrorResponse<Ticket>(response, nameof(AssignTicketAsync));
         }
 
         public async Task<Ticket?> UpdateTicketStatusAsync(Guid ticketId, string status) // Changed return type to nullable
@@ -110,17 +123,16 @@ namespace CSTS.Client.Services
                 var ticket = JsonConvert.DeserializeObject<Ticket>(responseContent);
                 return ticket;
             }
-
-            return null;
+            return await HandleErrorResponse<Ticket>(response, nameof(UpdateTicketStatusAsync));
         }
 
-        public async Task<TicketComment?> AddCommentAsync(Guid ticketId, string comment) // Changed return type to nullable
+        public async Task<TicketComment?> AddCommentAsync(Guid userId, Guid ticketId, string comment)
         {
             var addCommentRequest = new AddCommentRequest { Comment = comment };
             var json = JsonConvert.SerializeObject(addCommentRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"{_baseUrl}/api/tickets/{ticketId}/comments", content);
+            var response = await _httpClient.PostAsync($"{_baseUrl}/api/comment/{userId}/{ticketId}", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -128,8 +140,7 @@ namespace CSTS.Client.Services
                 var ticketComment = JsonConvert.DeserializeObject<TicketComment>(responseContent);
                 return ticketComment;
             }
-
-            return null;
+            return await HandleErrorResponse<TicketComment>(response, nameof(AddCommentAsync));
         }
 
         public async Task<Ticket?> CreateTicketAsync(CreateTicketRequest createTicketRequest) // Changed return type to nullable
@@ -145,8 +156,7 @@ namespace CSTS.Client.Services
                 var ticket = JsonConvert.DeserializeObject<Ticket>(responseContent);
                 return ticket;
             }
-
-            return null;
+            return await HandleErrorResponse<Ticket>(response, nameof(CreateTicketAsync));
         }
 
         public async Task<List<Ticket>> GetTicketsAsync(UserRole userRole)
@@ -159,8 +169,7 @@ namespace CSTS.Client.Services
                 var tickets = JsonConvert.DeserializeObject<List<Ticket>>(responseContent);
                 return tickets ?? new List<Ticket>();
             }
-
-            return new List<Ticket>();
+            return await HandleErrorResponseForList<Ticket>(response, nameof(GetTicketsAsync));
         }
 
         public async Task<LoginResponseDto?> LoginAsync(LoginRequest loginRequest) // Changed return type
@@ -176,8 +185,7 @@ namespace CSTS.Client.Services
                 var loginResponse = JsonConvert.DeserializeObject<LoginResponseDto>(responseContent);
                 return loginResponse;
             }
-
-            return null;
+            return await HandleErrorResponse<LoginResponseDto>(response, nameof(LoginAsync));
         }
     }
 }

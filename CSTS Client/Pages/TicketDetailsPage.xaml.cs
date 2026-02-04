@@ -86,7 +86,7 @@ namespace CSTS.Client.Pages
             var comment = CommentTextBox.Text;
             if (!string.IsNullOrEmpty(comment))
             {
-                var newComment = await _apiClient.AddCommentAsync(_ticket.Id, comment);
+                var newComment = await _apiClient.AddCommentAsync(_loginResponse.UserId, _ticket.Id, comment);
                 if (newComment != null)
                 {
                     CommentTextBox.Text = string.Empty;
