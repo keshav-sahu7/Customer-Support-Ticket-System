@@ -1,7 +1,9 @@
 using CSTS.Api.Data;
-using CSTS.Api.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace CSTS.Api.UnitOfWork
@@ -9,41 +11,48 @@ namespace CSTS.Api.UnitOfWork
     public class UnitOfWork : IUnitOfWork
     {
         private readonly CstsDbContext _context;
-        private Hashtable _repositories;
-        public ITicketRepository Tickets { get; }
-        public IUserRepository Users { get; }
 
         public UnitOfWork(CstsDbContext context)
         {
             _context = context;
-            _repositories = new Hashtable();
-            Tickets = new TicketRepository(_context);
-            Users = new UserRepository(_context);
         }
 
-        public IRepository<T> Repository<T>() where T : class
+        public IQueryable<T> GetAll<T>() where T : class
         {
-            if (_repositories == null)
-            {
-                _repositories = new Hashtable();
-            }
-
-            var type = typeof(T).Name;
-
-            if (!_repositories.ContainsKey(type))
-            {
-                var repositoryType = typeof(Repository<>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _context);
-                if (repositoryInstance != null)
-                {
-                    _repositories.Add(type, repositoryInstance);
-                }
-            }
-
-            return (IRepository<T>)_repositories[type]!;
+            return _context.Set<T>();
         }
 
-        public async Task<int> CompleteAsync()
+        public void Add<T>(T entity) where T : class
+        {
+            _context.Set<T>().Add(entity);
+        }
+
+        public void AddRange<T>(IEnumerable<T> entities) where T : class
+        {
+            _context.Set<T>().AddRange(entities);
+        }
+
+        public void Update<T>(T entity) where T : class
+        {
+            _context.Set<T>().Update(entity);
+        }
+
+        public void UpdateRange<T>(IEnumerable<T> entities) where T : class
+        {
+            _context.Set<T>().UpdateRange(entities);
+        }
+
+        public void Delete<T>(T entity) where T : class
+        {
+            _context.Set<T>().Remove(entity);
+        }
+
+        public void DeleteRange<T>(IEnumerable<T> entities) where T : class
+        {
+            _context.Set<T>().RemoveRange(entities);
+        }
+
+        public async Task<int> Commit()
         {
             return await _context.SaveChangesAsync();
         }
@@ -54,4 +63,3 @@ namespace CSTS.Api.UnitOfWork
         }
     }
 }
-

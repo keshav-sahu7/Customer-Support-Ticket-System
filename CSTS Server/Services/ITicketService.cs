@@ -13,7 +13,7 @@ namespace CSTS.Api.Services
         Task<Ticket> CreateTicketAsync(CreateTicketRequest createTicketRequest, Guid userId);
         Task<Ticket> UpdateTicketStatusAsync(Guid id, string newStatus, Guid userId);
         Task<Ticket> AssignTicketAsync(Guid id, Guid assignToId, Guid userId);
-        Task<IEnumerable<TicketComment>> GetCommentsAsync(Guid id);
+        Task<IEnumerable<CommentDto>> GetCommentsAsync(Guid id);
         Task<TicketComment> AddCommentAsync(Guid id, string comment, Guid userId);
     }
 }

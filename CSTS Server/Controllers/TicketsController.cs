@@ -47,43 +47,25 @@ namespace CSTS.Api.Controllers
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateTicketStatus(Guid id, [FromBody] UpdateTicketStatusRequest updateTicketStatusRequest)
         {
-            try
+            var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
+            var ticket = await _ticketService.UpdateTicketStatusAsync(id, updateTicketStatusRequest.Status, userId);
+            if (ticket == null)
             {
-                if (string.IsNullOrEmpty(updateTicketStatusRequest.Status))
-                {
-                    return BadRequest("Status is required.");
-                }
-                var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
-                var ticket = await _ticketService.UpdateTicketStatusAsync(id, updateTicketStatusRequest.Status, userId);
-                if (ticket == null)
-                {
-                    return NotFound();
-                }
-                return Ok(ticket);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(ticket);
         }
 
         [HttpPut("{id}/assign")]
         public async Task<IActionResult> AssignTicket(Guid id, [FromBody] AssignTicketRequest assignTicketRequest)
         {
-            try
+            var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
+            var ticket = await _ticketService.AssignTicketAsync(id, assignTicketRequest.AssignToId, userId);
+            if (ticket == null)
             {
-                var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
-                var ticket = await _ticketService.AssignTicketAsync(id, assignTicketRequest.AssignToId, userId);
-                if (ticket == null)
-                {
-                    return NotFound();
-                }
-                return Ok(ticket);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(ticket);
         }
 
         [HttpGet("{id}/comments")]
@@ -96,24 +78,13 @@ namespace CSTS.Api.Controllers
         [HttpPost("{id}/comments")]
         public async Task<IActionResult> AddComment(Guid id, [FromBody] AddCommentRequest addCommentRequest)
         {
-            try
+            var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
+            var comment = await _ticketService.AddCommentAsync(id, addCommentRequest.Comment, userId);
+            if (comment == null)
             {
-                if (string.IsNullOrEmpty(addCommentRequest.Comment))
-                {
-                    return BadRequest("Comment is required.");
-                }
-                var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
-                var comment = await _ticketService.AddCommentAsync(id, addCommentRequest.Comment, userId);
-                if (comment == null)
-                {
-                    return NotFound();
-                }
-                return Ok(comment);
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(comment);
         }
     }
 }

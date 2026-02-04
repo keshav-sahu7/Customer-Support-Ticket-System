@@ -26,11 +26,6 @@ namespace CSTS.Api.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequest loginRequest) // Return type changed
         {
-            if (string.IsNullOrEmpty(loginRequest.Username) || string.IsNullOrEmpty(loginRequest.Password))
-            {
-                return BadRequest("Username and password are required.");
-            }
-
             var loginResponse = await _userService.LoginAsync(loginRequest.Username, loginRequest.Password);
 
             if (loginResponse == null)

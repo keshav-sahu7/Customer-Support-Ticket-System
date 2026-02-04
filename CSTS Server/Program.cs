@@ -1,5 +1,6 @@
 using CSTS.Api.Data;
 using CSTS.Api.Data.Entities;
+using CSTS.Api.Repositories;
 using CSTS.Api.Services;
 using CSTS.Api.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+// Register repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<CstsDbContext>(options =>
@@ -66,4 +72,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-

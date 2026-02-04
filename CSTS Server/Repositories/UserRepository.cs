@@ -1,5 +1,5 @@
-using CSTS.Api.Data;
 using CSTS.Api.Data.Entities;
+using CSTS.Api.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,21 +10,21 @@ namespace CSTS.Api.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly CstsDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserRepository(CstsDbContext context)
+        public UserRepository(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<User>> GetAdminUsersAsync()
         {
-            return await _context.Users.Where(u => u.Role == UserRole.Admin).ToListAsync();
+            return await _unitOfWork.GetAll<User>().Where(u => u.Role == UserRole.Admin).ToListAsync();
         }
 
         public async Task<User?> GetUserByUsernameAndPasswordAsync(string username, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            var user = await _unitOfWork.GetAll<User>().FirstOrDefaultAsync(u => u.Username == username);
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash, false, BCrypt.Net.HashType.SHA256))
             {
                 return user;

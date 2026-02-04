@@ -7,8 +7,6 @@ namespace CSTS.Client.Models
         public Guid Id { get; set; }
         public string? Content { get; set; }
         public DateTime CreatedAt { get; set; }
-        public Guid TicketId { get; set; }
-        public Guid CreatedById { get; set; }
-        public User? CreatedBy { get; set; }
+        public string? CreatedByUsername { get; set; }
     }
 }

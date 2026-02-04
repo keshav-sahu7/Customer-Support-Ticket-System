@@ -1,6 +1,6 @@
 using CSTS.Api.Data.Entities;
 using CSTS.Api.Dtos;
-using CSTS.Api.UnitOfWork;
+using CSTS.Api.Repositories;
 using Microsoft.Extensions.Configuration; // Added for IConfiguration
 using Microsoft.IdentityModel.Tokens; // Added for SymmetricSecurityKey
 using System;
@@ -14,23 +14,23 @@ namespace CSTS.Api.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration; // Injected IConfiguration
 
-        public UserService(IUnitOfWork unitOfWork, IConfiguration configuration) // Constructor updated
+        public UserService(IUserRepository userRepository, IConfiguration configuration) // Constructor updated
         {
-            _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
             _configuration = configuration;
         }
 
         public async Task<IEnumerable<User>> GetAdminUsersAsync()
         {
-            return await _unitOfWork.Users.GetAdminUsersAsync();
+            return await _userRepository.GetAdminUsersAsync();
         }
 
         public async Task<LoginResponseDto?> LoginAsync(string username, string password) // Return type changed
         {
-            var user = await _unitOfWork.Users.GetUserByUsernameAndPasswordAsync(username, password);
+            var user = await _userRepository.GetUserByUsernameAndPasswordAsync(username, password);
 
             if (user == null)
             {

@@ -1,8 +1,11 @@
 using CSTS.Api.Data.Entities;
 using CSTS.Api.Dtos;
+using CSTS.Api.Repositories;
 using CSTS.Api.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CSTS.Api.Services
@@ -10,26 +13,31 @@ namespace CSTS.Api.Services
     public class TicketService : ITicketService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITicketRepository _ticketRepository;
 
-        public TicketService(IUnitOfWork unitOfWork)
+
+        public TicketService(
+            IUnitOfWork unitOfWork,
+            ITicketRepository ticketRepository)
         {
             _unitOfWork = unitOfWork;
+            _ticketRepository = ticketRepository;
         }
 
         public async Task<Ticket> GetTicketAsync(Guid id)
         {
-            return await _unitOfWork.Tickets.GetTicketWithDetailsAsync(id);
+            return await _ticketRepository.GetTicketWithDetailsAsync(id);
         }
 
         public async Task<IEnumerable<Ticket>> GetTicketsAsync(string role, Guid userId)
         {
             if (role == "Admin")
             {
-                return await _unitOfWork.Tickets.GetTicketsWithDetailsAsync();
+                return await _ticketRepository.GetTicketsWithDetailsAsync();
             }
             else
             {
-                return await _unitOfWork.Tickets.GetUserTicketsWithDetailsAsync(userId);
+                return await _ticketRepository.GetUserTicketsWithDetailsAsync(userId);
             }
         }
 
@@ -51,15 +59,15 @@ namespace CSTS.Api.Services
                 CreatedById = userId
             };
 
-            await _unitOfWork.Tickets.AddAsync(ticket);
-            await _unitOfWork.CompleteAsync();
+            await _ticketRepository.AddAsync(ticket);
+            await _unitOfWork.Commit();
 
             return ticket;
         }
 
         public async Task<Ticket> UpdateTicketStatusAsync(Guid id, string newStatusString, Guid userId)
         {
-            var ticket = await _unitOfWork.Tickets.GetByIdAsync(id);
+            var ticket = await _ticketRepository.GetByIdAsync(id);
 
             if (ticket == null)
             {
@@ -95,15 +103,16 @@ namespace CSTS.Api.Services
 
             ticket.Status = newStatus;
 
-            await _unitOfWork.Repository<TicketStatusHistory>().AddAsync(statusHistory);
-            await _unitOfWork.CompleteAsync();
+            _unitOfWork.Update(ticket);
+            _unitOfWork.Add(statusHistory);
+            await _unitOfWork.Commit();
 
             return ticket;
         }
 
         public async Task<Ticket> AssignTicketAsync(Guid id, Guid assignToId, Guid userId)
         {
-            var ticket = await _unitOfWork.Tickets.GetByIdAsync(id);
+            var ticket = await _ticketRepository.GetByIdAsync(id);
 
             if (ticket == null)
             {
@@ -129,20 +138,31 @@ namespace CSTS.Api.Services
 
             ticket.AssignedToId = assignToId;
 
-            await _unitOfWork.Repository<TicketAssignmentHistory>().AddAsync(assignmentHistory);
-            await _unitOfWork.CompleteAsync();
+            _unitOfWork.Update(ticket);
+            _unitOfWork.Add(assignmentHistory);
+            await _unitOfWork.Commit();
 
             return ticket;
         }
 
-        public async Task<IEnumerable<TicketComment>> GetCommentsAsync(Guid id)
+        public async Task<IEnumerable<CommentDto>> GetCommentsAsync(Guid id)
         {
-            return await _unitOfWork.Repository<TicketComment>().FindAsync(c => c.TicketId == id);
+            return await _unitOfWork.GetAll<TicketComment>()
+                .Include(c => c.CreatedBy)
+                .Where(c => c.TicketId == id)
+                .Select(c => new CommentDto
+                {
+                    Id = c.Id,
+                    Content = c.Content,
+                    CreatedAt = c.CreatedAt,
+                    CreatedByUsername = c.CreatedBy != null ? c.CreatedBy.Username : "Unknown"
+                })
+                .ToListAsync();
         }
 
         public async Task<TicketComment> AddCommentAsync(Guid id, string comment, Guid userId)
         {
-            var ticket = await _unitOfWork.Tickets.GetByIdAsync(id);
+            var ticket = await _ticketRepository.GetByIdAsync(id);
 
             if (ticket == null)
             {
@@ -163,8 +183,8 @@ namespace CSTS.Api.Services
                 CreatedById = userId
             };
 
-            await _unitOfWork.Repository<TicketComment>().AddAsync(newComment);
-            await _unitOfWork.CompleteAsync();
+            _unitOfWork.Add(newComment);
+            await _unitOfWork.Commit();
 
             return newComment;
         }
