@@ -11,6 +11,7 @@ CREATE TABLE `User` (
 -- Create Ticket Table
 CREATE TABLE `Ticket` (
     `Id` CHAR(36) NOT NULL,
+    `TicketNumber` VARCHAR(6) NOT NULL UNIQUE,
     `Subject` VARCHAR(100) NOT NULL,
     `Description` TEXT NOT NULL,
     `Priority` INT NOT NULL,
