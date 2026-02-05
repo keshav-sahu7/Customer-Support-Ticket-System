@@ -11,6 +11,7 @@ namespace CSTS.Api.Repositories
         Task<IEnumerable<Ticket>> GetTicketsWithDetailsAsync(Guid? userId);
         Task<Ticket> GetTicketWithDetailsAsync(Guid id);
         Task AddAsync(Ticket ticket);
+        Task<bool> IsTikcetNumberAvailable(string ticketNumber);
     }
 }
 

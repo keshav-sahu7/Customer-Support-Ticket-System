@@ -24,6 +24,26 @@ namespace CSTS.Api.Services
             _ticketRepository = ticketRepository;
         }
 
+        private async Task<string> GenerateUniqueTicketNumberAsync()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            string ticketNumber;
+            bool isUnique;
+
+            do
+            {
+                ticketNumber = new string(Enumerable.Repeat(chars, 6)
+                  .Select(s => s[random.Next(s.Length)]).ToArray());
+
+                // Check for uniqueness in the database
+                isUnique = await _ticketRepository.IsTikcetNumberAvailable(ticketNumber);
+
+            } while (!isUnique);
+
+            return ticketNumber;
+        }
+
         public async Task<Ticket> GetTicketAsync(Guid id)
         {
             return await _ticketRepository.GetTicketWithDetailsAsync(id);
@@ -45,6 +65,7 @@ namespace CSTS.Api.Services
             var ticket = new Ticket
             {
                 Id = Guid.NewGuid(),
+                TicketNumber = await GenerateUniqueTicketNumberAsync(),
                 Subject = createTicketRequest.Subject,
                 Description = createTicketRequest.Description,
                 Priority = Enum.Parse<TicketPriority>(createTicketRequest.Priority, true),

@@ -19,6 +19,7 @@ namespace CSTS.Client.Models
     public class Ticket
     {
         public Guid Id { get; set; }
+        public string TicketNumber { get; set; }
         public string? Subject { get; set; }
         public string? Description { get; set; }
         public TicketPriority Priority { get; set; }

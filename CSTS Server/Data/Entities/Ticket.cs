@@ -24,6 +24,10 @@ namespace CSTS.Api.Data.Entities
         public Guid Id { get; set; }
 
         [Required]
+        [MaxLength(6)]
+        public string TicketNumber { get; set; } = string.Empty;
+
+        [Required]
         [MaxLength(100)]
         public string Subject { get; set; } = string.Empty;
 

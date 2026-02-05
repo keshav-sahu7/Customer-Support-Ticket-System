@@ -17,7 +17,7 @@
             <ListView x:Name="TicketsListView">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Ticket Number" DisplayMemberBinding="{Binding Id}"/>
+                        <GridViewColumn Header="Ticket Number" DisplayMemberBinding="{Binding TicketNumber}"/>
                         <GridViewColumn Header="Subject" DisplayMemberBinding="{Binding Subject}"/>
                         <GridViewColumn Header="Priority" DisplayMemberBinding="{Binding Priority}"/>
                         <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}"/>

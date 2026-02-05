@@ -50,5 +50,11 @@ namespace CSTS.Api.Repositories
                 .Include(t => t.AssignedTo)
                 .ToListAsync();
         }
+
+        public async Task<bool> IsTikcetNumberAvailable(string ticketNumber)
+        {
+            return !_unitOfWork.GetAll<Ticket>()
+                .Any(t => t.TicketNumber == ticketNumber);
+        }
     }
 }
