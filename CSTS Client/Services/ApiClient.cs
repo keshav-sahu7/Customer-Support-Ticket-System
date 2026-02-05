@@ -1,13 +1,10 @@
 using CSTS.Client.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers; // Added for AuthenticationHeaderValue
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows; // Added for MessageBox
 
 namespace CSTS.Client.Services
@@ -92,13 +89,12 @@ namespace CSTS.Client.Services
             return await HandleErrorResponseForList<User>(response, nameof(GetUsersAsync));
         }
 
-        public async Task<Ticket?> AssignTicketAsync(Guid ticketId, Guid assignToId) // Changed return type to nullable
+        public async Task<Ticket?> UpdateTicketDetailsAsync(UpdateTicketDetailsRequest request, UserRole role)
         {
-            var assignTicketRequest = new AssignTicketRequest { AssignToId = assignToId };
-            var json = JsonConvert.SerializeObject(assignTicketRequest);
+            var json = JsonConvert.SerializeObject(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PutAsync($"{_baseUrl}/api/tickets/{ticketId}/assign", content);
+            var response = await _httpClient.PutAsync($"{_baseUrl}/api/tickets/{role.ToString()}", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -106,24 +102,7 @@ namespace CSTS.Client.Services
                 var ticket = JsonConvert.DeserializeObject<Ticket>(responseContent);
                 return ticket;
             }
-            return await HandleErrorResponse<Ticket>(response, nameof(AssignTicketAsync));
-        }
-
-        public async Task<Ticket?> UpdateTicketStatusAsync(Guid ticketId, string status) // Changed return type to nullable
-        {
-            var updateTicketStatusRequest = new UpdateTicketStatusRequest { Status = status };
-            var json = JsonConvert.SerializeObject(updateTicketStatusRequest);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PutAsync($"{_baseUrl}/api/tickets/{ticketId}/status", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var ticket = JsonConvert.DeserializeObject<Ticket>(responseContent);
-                return ticket;
-            }
-            return await HandleErrorResponse<Ticket>(response, nameof(UpdateTicketStatusAsync));
+            return await HandleErrorResponse<Ticket>(response, nameof(UpdateTicketDetailsAsync));
         }
 
         public async Task<TicketComment?> AddCommentAsync(Guid userId, Guid ticketId, string comment)
@@ -159,9 +138,9 @@ namespace CSTS.Client.Services
             return await HandleErrorResponse<Ticket>(response, nameof(CreateTicketAsync));
         }
 
-        public async Task<List<Ticket>> GetTicketsAsync(UserRole userRole)
+        public async Task<List<Ticket>> GetTicketsAsync(Guid userId, UserRole userRole)
         {
-            var response = await _httpClient.GetAsync($"{_baseUrl}/api/tickets?role={userRole}");
+            var response = await _httpClient.GetAsync($"{_baseUrl}/api/tickets/all/{userId.ToString()}?role={userRole}");
 
             if (response.IsSuccessStatusCode)
             {

@@ -29,19 +29,13 @@ namespace CSTS.Api.Services
             return await _ticketRepository.GetTicketWithDetailsAsync(id);
         }
 
-        public async Task<IEnumerable<Ticket>> GetTicketsAsync(string role, Guid userId)
+        public async Task<IEnumerable<Ticket>> GetTicketsAsync(Guid userId, UserRole role)
         {
-            if (role == "Admin")
-            {
-                return await _ticketRepository.GetTicketsWithDetailsAsync();
-            }
-            else
-            {
-                return await _ticketRepository.GetUserTicketsWithDetailsAsync(userId);
-            }
+
+            return await _ticketRepository.GetTicketsWithDetailsAsync(role == UserRole.User ? userId : null);
         }
 
-        public async Task<Ticket> CreateTicketAsync(CreateTicketRequest createTicketRequest, Guid userId)
+        public async Task<Ticket> CreateTicketAsync(CreateTicketRequest createTicketRequest)
         {
             if (string.IsNullOrEmpty(createTicketRequest.Subject) || string.IsNullOrEmpty(createTicketRequest.Description) || string.IsNullOrEmpty(createTicketRequest.Priority))
             {
@@ -56,7 +50,7 @@ namespace CSTS.Api.Services
                 Priority = Enum.Parse<TicketPriority>(createTicketRequest.Priority, true),
                 Status = TicketStatus.Open,
                 CreatedAt = DateTime.UtcNow,
-                CreatedById = userId
+                CreatedById = createTicketRequest.UserId
             };
 
             await _ticketRepository.AddAsync(ticket);
@@ -65,9 +59,9 @@ namespace CSTS.Api.Services
             return ticket;
         }
 
-        public async Task<Ticket> UpdateTicketStatusAsync(Guid id, string newStatusString, Guid userId)
+        public async Task<Ticket> UpdateTicketDetailsAsync(UpdateTicketDetailsRequest request)
         {
-            var ticket = await _ticketRepository.GetByIdAsync(id);
+            var ticket = await _ticketRepository.GetByIdAsync(request.TicketId);
 
             if (ticket == null)
             {
@@ -79,67 +73,56 @@ namespace CSTS.Api.Services
                 throw new Exception("Cannot update a closed ticket.");
             }
 
-            var newStatus = Enum.Parse<TicketStatus>(newStatusString, true);
-
-            if (ticket.Status == TicketStatus.Open && newStatus != TicketStatus.InProgress)
+            if (request.Status != null)
             {
-                throw new Exception("A ticket can only be moved from Open to InProgress.");
+                var newStatus = Enum.Parse<TicketStatus>(request.Status, true);
+
+                if (ticket.Status != newStatus)
+                {
+                    if (ticket.Status == TicketStatus.Open && newStatus != TicketStatus.InProgress)
+                    {
+                        throw new Exception("A ticket can only be moved from Open to InProgress.");
+                    }
+
+                    if (ticket.Status == TicketStatus.InProgress && newStatus != TicketStatus.Closed)
+                    {
+                        throw new Exception("A ticket can only be moved from InProgress to Closed.");
+                    }
+
+                    var statusHistory = new TicketStatusHistory
+                    {
+                        Id = Guid.NewGuid(),
+                        TicketId = ticket.Id,
+                        OldStatus = ticket.Status,
+                        NewStatus = newStatus,
+                        ChangedAt = DateTime.UtcNow,
+                        ChangedById = request.UserId
+                    };
+
+                    ticket.Status = newStatus;
+                    _unitOfWork.Add(statusHistory);
+                }
             }
 
-            if (ticket.Status == TicketStatus.InProgress && newStatus != TicketStatus.Closed)
+            if (request.AssigneeId.HasValue && ticket.AssignedToId != request.AssigneeId.Value)
             {
-                throw new Exception("A ticket can only be moved from InProgress to Closed.");
+                var oldAssignedToId = ticket.AssignedToId;
+
+                var assignmentHistory = new TicketAssignmentHistory
+                {
+                    Id = Guid.NewGuid(),
+                    TicketId = ticket.Id,
+                    OldAssignedToId = oldAssignedToId,
+                    NewAssignedToId = request.AssigneeId.Value,
+                    ChangedAt = DateTime.UtcNow,
+                    ChangedById = request.UserId
+                };
+
+                ticket.AssignedToId = request.AssigneeId.Value;
+                _unitOfWork.Add(assignmentHistory);
             }
-
-            var statusHistory = new TicketStatusHistory
-            {
-                Id = Guid.NewGuid(),
-                TicketId = ticket.Id,
-                OldStatus = ticket.Status,
-                NewStatus = newStatus,
-                ChangedAt = DateTime.UtcNow,
-                ChangedById = userId
-            };
-
-            ticket.Status = newStatus;
-
+            
             _unitOfWork.Update(ticket);
-            _unitOfWork.Add(statusHistory);
-            await _unitOfWork.Commit();
-
-            return ticket;
-        }
-
-        public async Task<Ticket> AssignTicketAsync(Guid id, Guid assignToId, Guid userId)
-        {
-            var ticket = await _ticketRepository.GetByIdAsync(id);
-
-            if (ticket == null)
-            {
-                return null!;
-            }
-
-            if (ticket.Status == TicketStatus.Closed)
-            {
-                throw new Exception("Cannot assign a closed ticket.");
-            }
-
-            var oldAssignedToId = ticket.AssignedToId;
-
-            var assignmentHistory = new TicketAssignmentHistory
-            {
-                Id = Guid.NewGuid(),
-                TicketId = ticket.Id,
-                OldAssignedToId = oldAssignedToId,
-                NewAssignedToId = assignToId,
-                ChangedAt = DateTime.UtcNow,
-                ChangedById = userId
-            };
-
-            ticket.AssignedToId = assignToId;
-
-            _unitOfWork.Update(ticket);
-            _unitOfWork.Add(assignmentHistory);
             await _unitOfWork.Commit();
 
             return ticket;

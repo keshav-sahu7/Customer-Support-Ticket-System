@@ -28,7 +28,8 @@ namespace CSTS.Client.Pages
                     {
                         Subject = SubjectTextBox.Text,
                         Description = DescriptionTextBox.Text,
-                        Priority = priority
+                        Priority = priority,
+                        UserId = _loginResponse.UserId
                     };
 
                     var ticket = await _apiClient.CreateTicketAsync(createTicketRequest);

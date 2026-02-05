@@ -1,3 +1,4 @@
+using CSTS.Api.Data.Entities;
 using CSTS.Api.Dtos;
 using CSTS.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -35,13 +36,12 @@ namespace CSTS.Api.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetTickets([FromQuery] string role = "Admin")
+        [HttpGet("all/{userId}")]
+        public async Task<IActionResult> GetTickets([FromQuery] string role, Guid userId)
         {
             try
             {
-                var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
-                var tickets = await _ticketService.GetTicketsAsync(role, userId);
+                var tickets = await _ticketService.GetTicketsAsync(userId,  Enum.Parse<UserRole>(role));
                 return Ok(tickets);
             }
             catch (Exception ex)
@@ -55,8 +55,7 @@ namespace CSTS.Api.Controllers
         {
             try
             {
-                var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
-                var ticket = await _ticketService.CreateTicketAsync(createTicketRequest, userId);
+                var ticket = await _ticketService.CreateTicketAsync(createTicketRequest);
                 return Ok(ticket);
             }
             catch (Exception ex)
@@ -65,32 +64,17 @@ namespace CSTS.Api.Controllers
             }
         }
 
-        [HttpPut("{id}/status")]
-        public async Task<IActionResult> UpdateTicketStatus(Guid id, [FromBody] UpdateTicketStatusRequest updateTicketStatusRequest)
+        [HttpPut("{role}")]
+        public async Task<IActionResult> UpdateTicket(string role, [FromBody] UpdateTicketDetailsRequest request)
         {
             try
             {
-                var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
-                var ticket = await _ticketService.UpdateTicketStatusAsync(id, updateTicketStatusRequest.Status, userId);
-                if (ticket == null)
+                if (Enum.Parse<UserRole>(role) != UserRole.Admin)
                 {
-                    return NotFound();
+                    throw new InvalidOperationException("Only admin allowed to change ticket");
                 }
-                return Ok(ticket);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("{id}/assign")]
-        public async Task<IActionResult> AssignTicket(Guid id, [FromBody] AssignTicketRequest assignTicketRequest)
-        {
-            try
-            {
-                var userId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-567890abcdef"); // Hardcoded user for now
-                var ticket = await _ticketService.AssignTicketAsync(id, assignTicketRequest.AssignToId, userId);
+                
+                var ticket = await _ticketService.UpdateTicketDetailsAsync(request);
                 if (ticket == null)
                 {
                     return NotFound();

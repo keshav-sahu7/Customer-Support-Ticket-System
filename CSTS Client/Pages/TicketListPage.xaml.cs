@@ -23,7 +23,7 @@ namespace CSTS.Client.Pages
         {
             // Assuming UserRole enum is accessible, either in Client.Models or referenced
             UserRole userRole = Enum.Parse<UserRole>(_loginResponse.Role); // Get role from login response
-            var tickets = await _apiClient.GetTicketsAsync(userRole);
+            var tickets = await _apiClient.GetTicketsAsync(_loginResponse.UserId, userRole);
             TicketsListView.ItemsSource = tickets;
         }
 

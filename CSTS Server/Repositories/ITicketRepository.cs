@@ -8,9 +8,8 @@ namespace CSTS.Api.Repositories
     public interface ITicketRepository
     {
         Task<Ticket> GetByIdAsync(Guid id);
-        Task<IEnumerable<Ticket>> GetTicketsWithDetailsAsync();
+        Task<IEnumerable<Ticket>> GetTicketsWithDetailsAsync(Guid? userId);
         Task<Ticket> GetTicketWithDetailsAsync(Guid id);
-        Task<IEnumerable<Ticket>> GetUserTicketsWithDetailsAsync(Guid userId);
         Task AddAsync(Ticket ticket);
     }
 }

@@ -13,5 +13,7 @@ namespace CSTS.Api.Dtos
 
         [Required]
         public string? Priority { get; set; }
+        [Required]
+        public Guid UserId { get; set; }
     }
 }

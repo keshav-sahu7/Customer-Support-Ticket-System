@@ -1,5 +1,6 @@
 using CSTS.Api.Data.Entities;
 using CSTS.Api.UnitOfWork;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -36,18 +37,15 @@ namespace CSTS.Api.Repositories
                 .FirstOrDefaultAsync(t => t.Id == id))!;
         }
 
-        public async Task<IEnumerable<Ticket>> GetTicketsWithDetailsAsync()
+        public async Task<IEnumerable<Ticket>> GetTicketsWithDetailsAsync(Guid? userId)
         {
-            return await _unitOfWork.GetAll<Ticket>()
-                .Include(t => t.CreatedBy)
-                .Include(t => t.AssignedTo)
-                .ToListAsync();
-        }
+            var predicate = PredicateBuilder.New<Ticket>(true);
 
-        public async Task<IEnumerable<Ticket>> GetUserTicketsWithDetailsAsync(Guid userId)
-        {
+            if (userId != null)
+                predicate = predicate.And(t => t.CreatedById == userId);
+
             return await _unitOfWork.GetAll<Ticket>()
-                .Where(t => t.CreatedById == userId)
+                .Where(predicate)
                 .Include(t => t.CreatedBy)
                 .Include(t => t.AssignedTo)
                 .ToListAsync();

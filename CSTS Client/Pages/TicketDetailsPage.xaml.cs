@@ -52,32 +52,39 @@ namespace CSTS.Client.Pages
 
         }
 
-        private async void AssignButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (AssignToComboBox.SelectedValue != null)
+            var request = new UpdateTicketDetailsRequest
             {
-                var assignToId = (Guid)AssignToComboBox.SelectedValue;
-                var updatedTicket = await _apiClient.AssignTicketAsync(_ticket.Id, assignToId);
+                UserId = _loginResponse.UserId,
+                TicketId = _ticket.Id
+            };
+            bool hasChanges = false;
+
+            if (AssignToComboBox.SelectedValue != null && (Guid)AssignToComboBox.SelectedValue != _ticket.AssignedToId)
+            {
+                request.AssigneeId = (Guid)AssignToComboBox.SelectedValue;
+                hasChanges = true;
+            }
+
+            if (StatusComboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.Content.ToString() != _ticket.Status.ToString())
+            {
+                request.Status = selectedItem.Content.ToString();
+                hasChanges = true;
+            }
+
+            if (hasChanges)
+            {
+                var updatedTicket = await _apiClient.UpdateTicketDetailsAsync(request, Enum.Parse<UserRole>(_loginResponse.Role));
                 if (updatedTicket != null)
                 {
                     this.DataContext = updatedTicket;
+                    MessageBox.Show("Ticket updated successfully!");
                 }
             }
-        }
-
-        private async void ChangeStatusButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (StatusComboBox.SelectedItem is ComboBoxItem selectedItem) // Use pattern matching for null check
+            else
             {
-                var status = selectedItem.Content.ToString();
-                if (status != null) // Additional null check
-                {
-                    var updatedTicket = await _apiClient.UpdateTicketStatusAsync(_ticket.Id, status);
-                    if (updatedTicket != null)
-                    {
-                        this.DataContext = updatedTicket;
-                    }
-                }
+                MessageBox.Show("No changes to save.");
             }
         }
 
